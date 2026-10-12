@@ -169,6 +169,12 @@ export const DELETE = async (
 
     return NextResponse.json({ message: "商品を削除しました。" }, { status: 200 });
   } catch (err) {
+    if (typeof err === "object" && err !== null && "code" in err && err.code === "ER_ROW_IS_REFERENCED_2") {
+      return NextResponse.json(
+        { message: "注文履歴に含まれる商品は削除できません。" },
+        { status: 409 },
+      );
+    }
     console.error("商品削除エラー：", err);
     return NextResponse.json(
       { message: "サーバーエラーが発生しました。" },

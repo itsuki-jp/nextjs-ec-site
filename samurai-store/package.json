@@ -6,7 +6,12 @@
     "dev": "node scripts/ensure-db.mjs && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:favorites": "node scripts/ensure-db.mjs && node scripts/setup-favorites-db.mjs",
+    "db:orders": "node scripts/ensure-db.mjs && node scripts/setup-orders-db.mjs",
+    "db:reviews": "node scripts/ensure-db.mjs && node scripts/setup-reviews-db.mjs",
+    "stripe:setup": "node scripts/stripe-local.mjs setup",
+    "stripe:listen": "node scripts/stripe-local.mjs listen"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -14,7 +19,8 @@
     "mysql2": "^3.24.4",
     "next": "16.3.4",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "stripe": "22.6.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

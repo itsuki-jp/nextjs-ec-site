@@ -77,7 +77,8 @@ export const POST = async (request: NextRequest) => {
       value: token,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      // StripeからのトップレベルGETによる戻りでも認証Cookieを送る。
+      sameSite: "lax",
       maxAge: 60 * 60,
       path: "/",
     });

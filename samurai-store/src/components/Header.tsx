@@ -3,8 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import { type AuthUser } from "@/lib/auth";
+import { useCart } from "@/hooks/useCart";
 
 const navigationItems = [
   { href: "/", label: "ホーム" },
@@ -16,12 +17,21 @@ export interface HeaderProps {
   user: AuthUser | null;
 }
 
+const subscribeToHydration = () => () => undefined;
+const getHydratedSnapshot = () => true;
+const getServerHydratedSnapshot = () => false;
+
 export const Header = ({ user }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const accountMenuRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
+  const { totalQuantity } = useCart();
+  // localStorageの復元がSuspense内のHeaderのhydrationより早くても、初回HTMLを一致させる。
+  const isHydrated = useSyncExternalStore(
+    subscribeToHydration, getHydratedSnapshot, getServerHydratedSnapshot,
+  );
   const perPage = searchParams.get("perPage") || "16";
   const sort = searchParams.get("sort") || "new";
   const keyword = searchParams.get("keyword") || "";
@@ -64,13 +74,13 @@ export const Header = ({ user }: HeaderProps) => {
         </div>
 
         <nav className="mt-8 hidden flex-grow text-center md:block">
-          <ul className="flex list-none justify-center space-x-8 pl-0">
-            {navigationItems.map((item, index) => (
-              <li
-                key={item.href}
-                className={index < navigationItems.length - 1 ? "border-r border-gray-300 pr-8" : undefined}
-              >
-                <Link href={item.href} className="whitespace-nowrap">
+          <ul className="inline-flex list-none divide-x divide-gray-300 pl-0">
+            {navigationItems.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className="block w-[120px] whitespace-nowrap rounded-sm py-3 hover:bg-gray-200"
+                >
                   {item.label}
                 </Link>
               </li>
@@ -95,8 +105,13 @@ export const Header = ({ user }: HeaderProps) => {
           <Link href="/account/favorites" aria-label="お気に入り">
             <Image src="/icons/heart-icon.svg" alt="Favorites" width={24} height={24} className="h-6 w-6" />
           </Link>
-          <Link href="/cart" aria-label="カート">
+          <Link href="/cart" aria-label="カート" className="relative">
             <Image src="/icons/cart-icon.svg" alt="Cart" width={24} height={24} className="h-6 w-6" />
+            {isHydrated && totalQuantity > 0 && (
+              <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-yellow-500 text-xs font-semibold text-black ring-2 ring-white">
+                {totalQuantity > 9 ? "9+" : totalQuantity}
+              </span>
+            )}
           </Link>
           <div className="relative" ref={accountMenuRef}>
             <button type="button" onClick={toggleAccountMenu} className="relative cursor-pointer" aria-expanded={isAccountMenuOpen} aria-label="アカウントメニュー">

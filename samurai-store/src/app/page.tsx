@@ -66,15 +66,15 @@ const HomeContent = () => {
           priority
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center text-white">
-          <h1 className="mb-4 text-3xl font-bold drop-shadow-md sm:text-4xl md:text-5xl">
+          <h1 className="mb-4 text-3xl font-bold drop-shadow-md text-shadow-lg/50 sm:text-4xl md:text-5xl">
             最新コレクションを発見
           </h1>
-          <p className="mb-8 text-base drop-shadow-md sm:text-lg md:text-xl">
+          <p className="mb-8 text-base drop-shadow-md text-shadow-lg/50 sm:text-lg md:text-xl">
             あなたのスタイルをアップグレードするアイテムを見つけよう
           </p>
           <Link
             href="/products"
-            className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-blue-800 shadow-md transition-colors hover:bg-gray-200 sm:text-base"
+            className="rounded-full border border-gray-700 bg-white px-6 py-3 text-sm font-semibold text-blue-800 shadow-md transition-colors hover:bg-gray-200 sm:text-base"
           >
             今すぐ見る
           </Link>
@@ -116,6 +116,8 @@ const HomeContent = () => {
                 title={item.name}
                 price={item.price}
                 imageUrl={item.image_url ?? undefined}
+                rating={item.review_avg ?? 0}
+                reviewCount={item.review_count ?? 0}
                 showCartButton
               />
             ))}
@@ -136,6 +138,8 @@ const HomeContent = () => {
                 title={item.name}
                 price={item.price}
                 imageUrl={item.image_url ?? undefined}
+                rating={item.review_avg ?? 0}
+                reviewCount={item.review_count ?? 0}
                 showCartButton
               />
             ))}

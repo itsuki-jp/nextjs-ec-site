@@ -5,6 +5,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getAuthUser } from "@/lib/auth";
+import { CartProvider } from "@/hooks/useCart";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,11 +34,13 @@ export const RootLayout = async ({ children }: LayoutProps<"/">) => {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Suspense fallback={null}>
-          <Header user={user} />
-        </Suspense>
-        {children}
-        <Footer />
+        <CartProvider>
+          <Suspense fallback={null}>
+            <Header user={user} />
+          </Suspense>
+          {children}
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );

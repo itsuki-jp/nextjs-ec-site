@@ -29,21 +29,21 @@ export const GET = async (request: NextRequest) => {
     const sort = searchParams.get("sort") ?? "new";
 
     // ORDER BY句は許可した文字列だけを使う
-    let order = "ORDER BY created_at DESC";
+    let order = "ORDER BY p.created_at DESC";
     switch (sort) {
       case "priceAsc":
-        order = "ORDER BY price ASC";
+        order = "ORDER BY p.price ASC";
         break;
       case "new":
       default:
-        order = "ORDER BY created_at DESC";
+        order = "ORDER BY p.created_at DESC";
         break;
     }
 
     // クエリパラメータから検索キーワードを取得
     const keyword = searchParams.get("keyword")?.trim() || "";
     const where = keyword
-      ? "WHERE (name LIKE ? OR description LIKE ?)"
+      ? "WHERE (p.name LIKE ? OR p.description LIKE ?)"
       : "";
     const whereParams = keyword ? [`%${keyword}%`, `%${keyword}%`] : [];
     const productsParams = [...whereParams, perPage, offset];
@@ -53,7 +53,21 @@ export const GET = async (request: NextRequest) => {
     const [products, totalItemsResult] = await Promise.all([
       // LIMITとOFFSETを使い、現在のページに表示する商品データだけを取得
       executeQuery<Product>(
-        `SELECT * FROM products ${where} ${order} LIMIT ? OFFSET ?;`,
+        `SELECT
+          p.id,
+          p.name,
+          p.price,
+          p.stock,
+          p.image_url,
+          p.updated_at,
+          COALESCE(ROUND(AVG(r.score), 1), 0) AS review_avg,
+          COALESCE(COUNT(r.id), 0) AS review_count
+        FROM products AS p
+        LEFT JOIN reviews AS r ON p.id = r.product_id
+        ${where}
+        GROUP BY p.id, p.name, p.price, p.stock, p.image_url, p.updated_at
+        ${order}
+        LIMIT ? OFFSET ?;`,
         productsParams,
       ),
       // 検索条件に合致する商品の全件数を取得

@@ -7,7 +7,7 @@ export const Footer = () => {
 
   return (
     <footer className="bg-gray-800 py-4 text-white">
-      <div className="container mx-auto mb-8 grid grid-cols-1 gap-8 border-b border-gray-700 px-4 pb-8 md:grid-cols-3">
+      <div className="container mx-auto mb-8 grid max-w-6xl grid-cols-1 gap-8 border-b border-gray-700 px-4 pb-8 md:grid-cols-[2.5fr_1.5fr_1fr]">
         <div>
           <h3 className="mb-4 text-xl">SAMURAI Storeについて</h3>
           <p className="text-sm leading-relaxed">最新のトレンドとテクノロジーを取り入れたアイテムをお届けします。</p>
@@ -32,7 +32,7 @@ export const Footer = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 text-center text-sm">
+      <div className="container mx-auto px-4 pb-8 text-center text-sm">
         <p>&copy; {currentYear} SAMURAI Store. All Rights Reserved.</p>
       </div>
     </footer>

@@ -62,6 +62,8 @@ const ProductsPage = async ({
       title: row.name,
       price: row.price,
       imageUrl: row.image_url ?? undefined,
+      rating: Number(row.review_avg ?? 0),
+      reviewCount: Number(row.review_count ?? 0),
     }),
   );
 
